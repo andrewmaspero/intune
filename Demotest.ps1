@@ -12,6 +12,4 @@ Start-OSDCloud  -FindImageFile -OSLanguage en-us -OSEdition Enterprise -OSActiva
 
 Write-Host -ForegroundColor Green “Restarting in 3 seconds!”
 
-Start-Sleep -Seconds 3
-
-wpeutil reboot
+Start-Sleep -Seconds 15
