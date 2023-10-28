@@ -8,7 +8,7 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 
 #Start-OSDCloud -ImageFileURL "D:\OSDCloud\0S\Win11_22H2_Enterprise.wim" -OSImageIndex "1" -ZTI
 
-Start-OSDCloud  -FindImageFile -OSImageIndex "1" -ZTI
+Start-OSDCloud -FindImageFile -OSImageIndex "1" -ZTI
 
 #Restart from WinPE
 
