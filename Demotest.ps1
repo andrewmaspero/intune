@@ -38,7 +38,7 @@ function Copy-FromBootImage {
         [string] $FileName
     )
     process {
-        $SourceFilePath = Join-Path -Path $env:SystemDrive -ChildPath ("OSDCloud\Scripts\" + $FileName)
+        $SourceFilePath = Join-Path -Path $env:SystemDrive -ChildPath ("\OSDCloud\Scripts\" + $FileName)
         $DestinationFolderPath = "C:\temp"
         if (-not $env:SystemDrive) {
             Write-Error "This script must be run in a WinPE environment."
