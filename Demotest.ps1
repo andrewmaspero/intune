@@ -38,7 +38,7 @@ function Copy-FromBootImage {
         [string] $FileName
     )
     process {
-        $SourceFilePath = Join-Path -Path $env:SystemDrive -ChildPath ("\OSDCloud\Scripts\" + $FileName)
+        $SourceFilePath = Join-Path -Path "D:\OSDCloud\Scripts\" + $FileName)
         $DestinationFolderPath = "C:\temp"
         if (-not $env:SystemDrive) {
             Write-Error "This script must be run in a WinPE environment."
@@ -78,17 +78,23 @@ $scriptFolderPath = "C:\temp\"
 Create-Folder -FolderPath $scriptFolderPath
 
 #Assign PC to User
-Start-Process "$env:SystemDrive\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Sleep -Seconds 1
 
 # Download ServiceUI.exe
 Write-Host -ForegroundColor Gray "Download ServiceUI.exe from GitHub Repo"
 Invoke-WebRequest https://github.com/piratesedge/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
+Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
 Copy-FromBootImage -FileName "OOBE-Task.exe"
+Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
+Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "OOBE-Startup-Script.ps1"
+Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
+Start-Sleep -Seconds 1
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
@@ -99,7 +105,7 @@ powershell.exe -Command Set-ExecutionPolicy RemoteSigned -Force
 powershell.exe -Command Start-Process "C:\temp\SpecialiseTaskScheduler.ps1
 '@
 $SetupCompleteCMD | Out-File -FilePath 'C:\Windows\Setup\Scripts\SetupComplete.cmd' -Encoding ascii -Force
-
+Start-Sleep -Seconds 1
 #=======================================================================
 #   Restart-Computer
 #=======================================================================
