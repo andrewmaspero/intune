@@ -102,7 +102,7 @@ Start-Sleep -Seconds 1
 Write-Host -ForegroundColor Green "Create C:\Windows\Setup\Scripts\SetupComplete.cmd"
 $SetupCompleteCMD = @'
 powershell.exe -Command "Set-ExecutionPolicy RemoteSigned -Force"
-powershell.exe -Command "Start-Process 'C:\temp\SpecialiseTaskScheduler.ps1' -Wait"
+powershell.exe -Command "Start-Process powershell -ArgumentList '-File C:\temp\SpecialiseTaskScheduler.ps1' -Wait"
 '@
 $SetupCompleteCMD | Out-File -FilePath 'C:\Windows\Setup\Scripts\SetupComplete.cmd' -Encoding ascii -Force
 Start-Sleep -Seconds 1
