@@ -87,7 +87,7 @@ Invoke-WebRequest https://github.com/piratesedge/intune/raw/main/ServiceUI64.exe
 Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
-Copy-FromBootImage -FileName "OOBE-Task.exe"
+Copy-FromBootImage -FileName "OOBE-Agent.exe"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
 Start-Sleep -Seconds 1
