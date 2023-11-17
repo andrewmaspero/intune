@@ -72,7 +72,7 @@ function Create-ScriptFolder {
 }
 
 # Set script folder paths
-$scriptFolderPath = "C:\temp\"
+$scriptFolderPath = "C:\temp"
 
 # Create script folder
 Create-Folder -FolderPath $scriptFolderPath
