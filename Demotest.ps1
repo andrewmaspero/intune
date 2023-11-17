@@ -88,7 +88,7 @@ Start-Sleep -Seconds 1
 
 # Download OOBE-Agent.exe
 Write-Host -ForegroundColor Gray "Download OOBE-Agent.exe from Local Webdav Server"
-Invoke-WebRequest truenas.local:30034/device-provisioning/OOBE-Agent.exe -OutFile "C:\temp\OOBE-Agent.exe"
+Invoke-WebRequest http://truenas.local:30034/device-provisioning/OOBE-Agent.exe -OutFile "C:\temp\OOBE-Agent.exe"
 Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
