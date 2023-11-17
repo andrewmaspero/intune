@@ -86,9 +86,12 @@ Write-Host -ForegroundColor Gray "Download ServiceUI.exe from GitHub Repo"
 Invoke-WebRequest https://github.com/piratesedge/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
 Start-Sleep -Seconds 1
 
-#Copy Files from Image to C: Drive
-Copy-FromBootImage -FileName "OOBE-Agent.exe"
+# Download OOBE-Agent.exe
+Write-Host -ForegroundColor Gray "Download OOBE-Agent.exe from Local Webdav Server"
+Invoke-WebRequest truenas.local:30034/device-provisioning/OOBE-Agent.exe -OutFile "C:\temp\OOBE-Agent.exe"
 Start-Sleep -Seconds 1
+
+#Copy Files from Image to C: Drive
 Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "OOBE-Startup-Script.ps1"
