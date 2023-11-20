@@ -62,7 +62,40 @@ function Copy-FromBootImage {
     }
 }
 
-function Create-ScriptFolder {
+function Copy-FolderToTemp {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string] $SourceFolder
+    )
+    process {
+        $DestinationFolderPath = "C:\temp"
+
+        if (-not $env:SystemDrive) {
+            Write-Error "This script must be run in a WinPE environment."
+            return
+        }
+
+        try {
+            if (Test-Path -Path $SourceFolder -PathType Container) {
+                $fullDestinationPath = Join-Path -Path $DestinationFolderPath -ChildPath (Split-Path $SourceFolder -Leaf)
+                if (-not (Test-Path -Path $fullDestinationPath)) {
+                    New-Item -ItemType Directory -Path $fullDestinationPath | Out-Null
+                }
+                Copy-Item -Path $SourceFolder -Destination $fullDestinationPath -Recurse -Force -ErrorAction Stop
+                Write-Output "Folder '$SourceFolder' has been copied to '$fullDestinationPath'"
+            } else {
+                throw "Source folder '$SourceFolder' does not exist or is not a directory."
+            }
+        }
+        catch {
+            Write-Error $_.Exception.Message
+        }
+    }
+}
+
+
+function Create-Folder {
     param (
         [string]$FolderPath
     )
@@ -71,11 +104,8 @@ function Create-ScriptFolder {
     }
 }
 
-# Set script folder paths
-$scriptFolderPath = "C:\temp"
-
 # Create script folder
-Create-Folder -FolderPath $scriptFolderPath
+Create-Folder -FolderPath "C:\temp"
 
 #Assign PC to User
 Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
@@ -98,6 +128,8 @@ Copy-FromBootImage -FileName "OOBE-Startup-Script.ps1"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
 Start-Sleep -Seconds 1
+Copy-FromBootImage -FileName 
+Copy-FolderToTemp -SourceFolder "D:\OSDCloud\Scripts\MSI"
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
