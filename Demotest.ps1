@@ -128,8 +128,12 @@ Copy-FromBootImage -FileName "OOBE-Startup-Script.ps1"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
 Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName 
+Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
+Start-Sleep -Seconds 1
+Copy-FromBootImage -FileName "Post-Install-Script.ps1"
+Start-Sleep -Seconds 1
 Copy-FolderToTemp -SourceFolder "D:\OSDCloud\Scripts\MSI"
+Start-Sleep -Seconds 1
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
