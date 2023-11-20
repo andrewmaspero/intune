@@ -78,7 +78,7 @@ function Copy-FolderToTemp {
 
         try {
             if (Test-Path -Path $SourceFolder -PathType Container) {
-                $fullDestinationPath = Join-Path -Path $DestinationFolderPath -ChildPath (Split-Path $SourceFolder -Leaf)
+                $fullDestinationPath = $DestinationFolderPath
                 if (-not (Test-Path -Path $fullDestinationPath)) {
                     New-Item -ItemType Directory -Path $fullDestinationPath | Out-Null
                 }
@@ -93,7 +93,6 @@ function Copy-FolderToTemp {
         }
     }
 }
-
 
 function Create-Folder {
     param (
