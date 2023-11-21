@@ -116,9 +116,9 @@ Invoke-WebRequest https://github.com/piratesedge/intune/raw/main/ServiceUI64.exe
 Start-Sleep -Seconds 1
 
 # Download OOBE-Agent.exe
-Write-Host -ForegroundColor Gray "Download OOBE-Agent.exe from Local Webdav Server"
-Invoke-WebRequest http://truenas.local:30034/device-provisioning/OOBE-Agent.exe -OutFile "C:\temp\OOBE-Agent.exe"
-Start-Sleep -Seconds 1
+#Write-Host -ForegroundColor Gray "Download OOBE-Agent.exe from Local Webdav Server"
+#Invoke-WebRequest http://truenas.local:30034/device-provisioning/OOBE-Agent.exe -OutFile "C:\temp\OOBE-Agent.exe"
+#Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
 Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
@@ -131,6 +131,7 @@ Copy-FromBootImage -FileName "Post-Install-Script.ps1"
 Start-Sleep -Seconds 1
 Copy-FolderToTemp -SourceFolder "D:\OSDCloud\Scripts\MSI"
 Start-Sleep -Seconds 1
+Copy-FromBootImage -FileName "OOBE-Agent.exe"
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
