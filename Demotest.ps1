@@ -1,18 +1,70 @@
+#Send Event Function
+
+function Send-EventUpdate {
+    param(
+        [Parameter(Mandatory=$true)] [string] $eventStage,
+        [Parameter(Mandatory=$true)] [string] $eventStatus
+    )
+
+    # Get system info
+    $bios = Get-CimInstance -ClassName Win32_BIOS
+    $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+    $physicalMemory = Get-CimInstance -ClassName Win32_PhysicalMemory
+    $baseboard = Get-CimInstance -ClassName Win32_BaseBoard
+    $processor = Get-CimInstance -ClassName Win32_Processor
+
+    $systemInfo = [PSCustomObject]@{
+        'serial_number' = $bios.SerialNumber
+        'manafacture'  = $bios.Manufacturer
+        'model'         = $computerSystem.Model
+        'ram'     = ($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB
+        'baseboard' = $baseboard.Product
+        'processor' = $processor.Name
+    }
+
+    # Endpoint URL
+    $url = "http://andreas-mba-15.local:8000/api/script-event-updates/"
+
+    $body = @{
+        "serial_number" = $systemInfo.serial_number
+        "event_stage" = $eventStage
+        "event_status" = $eventStatus
+        "manufacture" = $systemInfo.manafacture
+        "model" = $systemInfo.model
+        "baseboard" = $systemInfo.baseboard
+        "memory" = $systemInfo.ram
+        "processor" = $systemInfo.processor
+    }
+    $bodyJson = $body | ConvertTo-Json
+    $response = Invoke-RestMethod -Uri $url -Method Post -Body $bodyJson -ContentType "application/json"
+    return $response
+}
+
 #================================================
 #   [OSDCloud] Update Module
 #================================================
 
+Send-EventUpdate -eventStage "OSD Cloud Starting Up" -eventStatus "IN_PROGRESS"
+
+Start-Sleep -Seconds 3
+
 Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
+
+Send-EventUpdate -eventStage "Loading OSD Modules" -eventStatus "IN_PROGRESS"
+
 Install-Module OSD -Force
 
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
 
 Import-Module OSD -Force
 
+Send-EventUpdate -eventStage "Loading OSD Modules" -eventStatus "COMPLETED"
+
 Write-Host -ForegroundColor Green "Starting AFCA OSDCloud Setup"
 
-Start-Sleep -Seconds 1
+Start-Sleep -Seconds 2
 
+Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "IN_PROGRESS"
 Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 
 #=======================================================================
@@ -103,6 +155,9 @@ function Create-Folder {
     }
 }
 
+#Installation Finished
+Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "COMPLETED"
+
 # Create script folder
 Create-Folder -FolderPath "C:\temp"
 
@@ -146,6 +201,7 @@ Start-Sleep -Seconds 1
 #=======================================================================
 #   Restart-Computer
 #=======================================================================
+Send-EventUpdate -eventStage "Restarting Device" -eventStatus "IN_PROGRESS"
 Write-Host  -ForegroundColor Green "Restarting in 5 seconds!"
 Start-Sleep -Seconds 5
 wpeutil reboot
