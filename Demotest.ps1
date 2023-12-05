@@ -23,7 +23,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "http://andreas-mba-15.local:8000/api/script-event-updates/"
+    $url = "http://andreas-mba-15.local:8000/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
