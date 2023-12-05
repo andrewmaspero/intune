@@ -1,5 +1,8 @@
-#Send Event Function
+#================================================
+#   [OSDCloud]
+#================================================
 
+#Send Event Function
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -17,7 +20,7 @@ function Send-EventUpdate {
         'serial_number' = $bios.SerialNumber
         'manafacture'  = $bios.Manufacturer
         'model'         = $computerSystem.Model
-        'ram'     = ($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB
+        'ram'     = "{0:N2} GB" -f (($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB)  # Convert memory to string and append " GB"
         'baseboard' = $baseboard.Product
         'processor' = $processor.Name
     }
@@ -40,9 +43,7 @@ function Send-EventUpdate {
     return $response
 }
 
-#================================================
-#   [OSDCloud] Update Module
-#================================================
+#Start OSD Commands
 
 Send-EventUpdate -eventStage "OSD Cloud Starting Up" -eventStatus "IN_PROGRESS"
 
@@ -65,6 +66,7 @@ Write-Host -ForegroundColor Green "Starting AFCA OSDCloud Setup"
 Start-Sleep -Seconds 2
 
 Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "IN_PROGRESS"
+
 Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 
 #=======================================================================
