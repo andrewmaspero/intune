@@ -26,7 +26,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "http://andreas-mba-15.local:8000/api/osdcloud-event-updates/"
+    $url = "https://autoprovision.afca.org.au/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -82,7 +82,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "http://andreas-mba-15.local:8000/api/osdcloud-event-updates/"
+    $url = "https://autoprovision.afca.org.au/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -121,9 +121,9 @@ $Params = @{
     ZTI = $true
     Firmware = $false
 }
-#Start-OSDCloud @Params
+Start-OSDCloud @Params
 
-Start-OSDCloud -FindImageFile -OSImageIndex "3" -ZTI
+#Start-OSDCloud -FindImageFile -OSImageIndex "3" -ZTI
 
 function Copy-FromBootImage {
     [CmdletBinding()]
@@ -220,7 +220,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "http://andreas-mba-15.local:8000/api/osdcloud-event-updates/"
+    $url = "https://autoprovision.afca.org.au/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
