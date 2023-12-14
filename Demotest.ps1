@@ -269,7 +269,7 @@ Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "Post-Install-Script.ps1"
 Start-Sleep -Seconds 1
-Copy-FromBootImage -SourceFolder "ServiceUI64.exe"
+Copy-FromBootImage -FileName "ServiceUI64.exe"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "OOBE-Agent.exe"
 
