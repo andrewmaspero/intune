@@ -251,9 +251,9 @@ Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "Argu
 Start-Sleep -Seconds 1
 
 # Download ServiceUI.exe
-Write-Host -ForegroundColor Gray "Download ServiceUI.exe from GitHub Repo"
-Invoke-WebRequest https://github.com/andrewmaspero/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
-Start-Sleep -Seconds 1
+#Write-Host -ForegroundColor Gray "Download ServiceUI.exe from GitHub Repo"
+#Invoke-WebRequest https://github.com/andrewmaspero/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
+#Start-Sleep -Seconds 1
 
 # Download OOBE-Agent.exe
 #Write-Host -ForegroundColor Gray "Download OOBE-Agent.exe from Local Webdav Server"
@@ -269,7 +269,7 @@ Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "Post-Install-Script.ps1"
 Start-Sleep -Seconds 1
-Copy-FolderToTemp -SourceFolder "D:\OSDCloud\Scripts\MSI"
+Copy-FromBootImage -SourceFolder "ServiceUI64.exe"
 Start-Sleep -Seconds 1
 Copy-FromBootImage -FileName "OOBE-Agent.exe"
 
