@@ -2,6 +2,7 @@
 #   [OSDCloud]
 #================================================
 
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 #Send Event Function
 function Send-EventUpdate {
     param(
@@ -59,6 +60,7 @@ Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
 
 Import-Module OSD -Force
 
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -197,6 +199,7 @@ function Create-Folder {
     }
 }
 
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
