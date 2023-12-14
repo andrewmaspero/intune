@@ -252,7 +252,7 @@ Start-Sleep -Seconds 1
 
 # Download ServiceUI.exe
 Write-Host -ForegroundColor Gray "Download ServiceUI.exe from GitHub Repo"
-Invoke-WebRequest https://github.com/piratesedge/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
+Invoke-WebRequest https://github.com/andrewmaspero/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
 Start-Sleep -Seconds 1
 
 # Download OOBE-Agent.exe
