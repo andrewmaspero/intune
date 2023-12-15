@@ -227,15 +227,6 @@ function Copy-FolderToTemp {
     }
 }
 
-function Create-Folder {
-    param (
-        [string]$FolderPath
-    )
-    If (!(Test-Path -Path $FolderPath)) {
-        New-Item -Path $FolderPath -ItemType Directory -Force | Out-Null
-    }
-}
-
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -299,22 +290,21 @@ function Send-EventUpdate {
 #Installation Finished
 Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "COMPLETED"
 
+function Create-Folder {
+    param (
+        [string]$FolderPath
+    )
+    If (!(Test-Path -Path $FolderPath)) {
+        New-Item -Path $FolderPath -ItemType Directory -Force | Out-Null
+    }
+}
+
 # Create script folder
 Create-Folder -FolderPath "C:\temp"
 
 #Assign PC to User
 Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
-
-# Download ServiceUI.exe
-#Write-Host -ForegroundColor Gray "Download ServiceUI.exe from GitHub Repo"
-#Invoke-WebRequest https://github.com/andrewmaspero/intune/raw/main/ServiceUI64.exe -OutFile "C:\temp\ServiceUI.exe"
-#Start-Sleep -Seconds 1
-
-# Download OOBE-Agent.exe
-#Write-Host -ForegroundColor Gray "Download OOBE-Agent.exe from Local Webdav Server"
-#Invoke-WebRequest http://truenas.local:30034/device-provisioning/OOBE-Agent.exe -OutFile "C:\temp\OOBE-Agent.exe"
-#Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
 Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
@@ -345,4 +335,4 @@ Start-Sleep -Seconds 1
 Send-EventUpdate -eventStage "Restarting Device" -eventStatus "IN_PROGRESS"
 Write-Host  -ForegroundColor Green "Restarting in 5 seconds!"
 Start-Sleep -Seconds 5
-wpeutil reboot
+#wpeutil reboot
