@@ -54,8 +54,6 @@ Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
 
 Send-EventUpdate -eventStage "Loading OSD Modules" -eventStatus "IN_PROGRESS"
 
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-
 Install-Module OSD -Force
 
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
