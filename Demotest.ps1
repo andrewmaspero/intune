@@ -39,19 +39,25 @@ function Send-EventUpdate {
     }
     $bodyJson = $body | ConvertTo-Json
 
-    # Create a custom WebClient with ServerCertificateValidationCallback set to always return true
-    $handler = New-Object System.Net.Http.HttpClientHandler
-    $handler.ServerCertificateCustomValidationCallback = {$true}
-    $client = New-Object System.Net.Http.HttpClient($handler)
-
-    # Create the HTTP content for the JSON request
-    $content = New-Object System.Net.Http.StringContent($bodyJson, [System.Text.Encoding]::UTF8, "application/json")
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
     # Send the request
-    $response = $client.PostAsync($url, $content).Result
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
 
-    # Ensure to dispose the HttpClient object when done
-    $client.Dispose()
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
 
     return $response
 }
@@ -109,19 +115,25 @@ function Send-EventUpdate {
     }
     $bodyJson = $body | ConvertTo-Json
 
-    # Create a custom WebClient with ServerCertificateValidationCallback set to always return true
-    $handler = New-Object System.Net.Http.HttpClientHandler
-    $handler.ServerCertificateCustomValidationCallback = {$true}
-    $client = New-Object System.Net.Http.HttpClient($handler)
-
-    # Create the HTTP content for the JSON request
-    $content = New-Object System.Net.Http.StringContent($bodyJson, [System.Text.Encoding]::UTF8, "application/json")
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
     # Send the request
-    $response = $client.PostAsync($url, $content).Result
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
 
-    # Ensure to dispose the HttpClient object when done
-    $client.Dispose()
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
 
     return $response
 }
@@ -261,19 +273,25 @@ function Send-EventUpdate {
     }
     $bodyJson = $body | ConvertTo-Json
 
-    # Create a custom WebClient with ServerCertificateValidationCallback set to always return true
-    $handler = New-Object System.Net.Http.HttpClientHandler
-    $handler.ServerCertificateCustomValidationCallback = {$true}
-    $client = New-Object System.Net.Http.HttpClient($handler)
-
-    # Create the HTTP content for the JSON request
-    $content = New-Object System.Net.Http.StringContent($bodyJson, [System.Text.Encoding]::UTF8, "application/json")
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
     # Send the request
-    $response = $client.PostAsync($url, $content).Result
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
 
-    # Ensure to dispose the HttpClient object when done
-    $client.Dispose()
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
 
     return $response
 }
