@@ -160,6 +160,7 @@ $Params = @{
     ZTI = $true
     Firmware = $false
 }
+
 Start-OSDCloud @Params
 
 #Start-OSDCloud -FindImageFile -OSImageIndex "3" -ZTI
