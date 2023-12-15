@@ -159,7 +159,7 @@ function Copy-FromBootImage {
         [string] $FileName
     )
     process {
-        $SourceFilePath = Join-Path -Path "D:\OSDCloud\Scripts" -ChildPath $FileName
+        $SourceFilePath = Join-Path -Path "F:\OSDCloud\Scripts" -ChildPath $FileName
         $DestinationFolderPath = "C:\temp"
         if (-not $env:SystemDrive) {
             Write-Error "This script must be run in a WinPE environment."
@@ -285,7 +285,7 @@ Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -event
 Create-Folder -FolderPath "C:\temp"
 
 #Assign PC to User
-Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "F:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 # Download ServiceUI.exe
