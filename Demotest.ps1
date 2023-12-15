@@ -335,4 +335,4 @@ Start-Sleep -Seconds 1
 Send-EventUpdate -eventStage "Restarting Device" -eventStatus "IN_PROGRESS"
 Write-Host  -ForegroundColor Green "Restarting in 5 seconds!"
 Start-Sleep -Seconds 5
-#wpeutil reboot
+wpeutil reboot
