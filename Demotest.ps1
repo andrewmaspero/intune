@@ -2,8 +2,6 @@
 #   [OSDCloud]
 #================================================
 
-[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
-#Send Event Function
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -40,7 +38,21 @@ function Send-EventUpdate {
         "processor" = $systemInfo.processor
     }
     $bodyJson = $body | ConvertTo-Json
-    $response = Invoke-RestMethod -Uri $url -Method Post -Body $bodyJson -ContentType "application/json"
+
+    # Create a custom WebClient with ServerCertificateValidationCallback set to always return true
+    $handler = New-Object System.Net.Http.HttpClientHandler
+    $handler.ServerCertificateCustomValidationCallback = {$true}
+    $client = New-Object System.Net.Http.HttpClient($handler)
+
+    # Create the HTTP content for the JSON request
+    $content = New-Object System.Net.Http.StringContent($bodyJson, [System.Text.Encoding]::UTF8, "application/json")
+
+    # Send the request
+    $response = $client.PostAsync($url, $content).Result
+
+    # Ensure to dispose the HttpClient object when done
+    $client.Dispose()
+
     return $response
 }
 
@@ -60,7 +72,6 @@ Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
 
 Import-Module OSD -Force
 
-[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -97,7 +108,21 @@ function Send-EventUpdate {
         "processor" = $systemInfo.processor
     }
     $bodyJson = $body | ConvertTo-Json
-    $response = Invoke-RestMethod -Uri $url -Method Post -Body $bodyJson -ContentType "application/json"
+
+    # Create a custom WebClient with ServerCertificateValidationCallback set to always return true
+    $handler = New-Object System.Net.Http.HttpClientHandler
+    $handler.ServerCertificateCustomValidationCallback = {$true}
+    $client = New-Object System.Net.Http.HttpClient($handler)
+
+    # Create the HTTP content for the JSON request
+    $content = New-Object System.Net.Http.StringContent($bodyJson, [System.Text.Encoding]::UTF8, "application/json")
+
+    # Send the request
+    $response = $client.PostAsync($url, $content).Result
+
+    # Ensure to dispose the HttpClient object when done
+    $client.Dispose()
+
     return $response
 }
 
@@ -199,7 +224,6 @@ function Create-Folder {
     }
 }
 
-[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -236,7 +260,21 @@ function Send-EventUpdate {
         "processor" = $systemInfo.processor
     }
     $bodyJson = $body | ConvertTo-Json
-    $response = Invoke-RestMethod -Uri $url -Method Post -Body $bodyJson -ContentType "application/json"
+
+    # Create a custom WebClient with ServerCertificateValidationCallback set to always return true
+    $handler = New-Object System.Net.Http.HttpClientHandler
+    $handler.ServerCertificateCustomValidationCallback = {$true}
+    $client = New-Object System.Net.Http.HttpClient($handler)
+
+    # Create the HTTP content for the JSON request
+    $content = New-Object System.Net.Http.StringContent($bodyJson, [System.Text.Encoding]::UTF8, "application/json")
+
+    # Send the request
+    $response = $client.PostAsync($url, $content).Result
+
+    # Ensure to dispose the HttpClient object when done
+    $client.Dispose()
+
     return $response
 }
 
