@@ -161,9 +161,9 @@ $Params = @{
     Firmware = $false
 }
 
-Start-OSDCloud @Params
+#Start-OSDCloud @Params
 
-#Start-OSDCloud -FindImageFile -OSImageIndex "3" -ZTI
+Start-OSDCloud -ImageFileUrl "http://autoprovision.afca.org.au:8080/install.wim" -OSImageIndex "1" -ZTI
 
 function Copy-FromBootImage {
     [CmdletBinding()]
