@@ -161,9 +161,9 @@ $Params = @{
     Firmware = $false
 }
 
-Start-OSDCloud @Params
+#Start-OSDCloud @Params
 
-#Start-OSDCloud -FindImageFile -OSImageIndex "3" -ZTI
+Start-OSDCloud -ImageFileUrl "http://autoprovision.local:8080/install.wim" -OSImageIndex "1" -ZTI
 
 function Copy-FromBootImage {
     [CmdletBinding()]
@@ -172,7 +172,7 @@ function Copy-FromBootImage {
         [string] $FileName
     )
     process {
-        $SourceFilePath = Join-Path -Path "E:\OSDCloud\Scripts" -ChildPath $FileName
+        $SourceFilePath = Join-Path -Path "D:\OSDCloud\Scripts" -ChildPath $FileName
         $DestinationFolderPath = "C:\temp"
         if (-not $env:SystemDrive) {
             Write-Error "This script must be run in a WinPE environment."
@@ -304,7 +304,7 @@ function Create-Folder {
 Create-Folder -FolderPath "C:\temp"
 
 #Assign PC to User
-Start-Process "E:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
@@ -510,7 +510,7 @@ function Copy-FromBootImage {
         [string] $FileName
     )
     process {
-        $SourceFilePath = Join-Path -Path "E:\OSDCloud\Scripts" -ChildPath $FileName
+        $SourceFilePath = Join-Path -Path "D:\OSDCloud\Scripts" -ChildPath $FileName
         $DestinationFolderPath = "C:\temp"
         if (-not $env:SystemDrive) {
             Write-Error "This script must be run in a WinPE environment."
@@ -642,7 +642,7 @@ function Create-Folder {
 Create-Folder -FolderPath "C:\temp"
 
 #Assign PC to User
-Start-Process "E:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
