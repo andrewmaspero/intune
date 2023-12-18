@@ -72,8 +72,6 @@ Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
 
 Send-EventUpdate -eventStage "Loading OSD Modules" -eventStatus "IN_PROGRESS"
 
-Install-Module OSD -Force
-
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
 
 Import-Module OSD -Force
