@@ -149,17 +149,21 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #=======================================================================
 #   [OS] Params and Start-OSDCloud
 #=======================================================================
+$Global:StartOSDCloud = @{
+    MSCatalogFirmware = $false
+    MSCatalogDiskDrivers = $true
+    MSCatalogNetDrivers = $false  # Set this to false to disable downloading network drivers
+    MSCatalogScsiDrivers = $false
+}
+
 $Params = @{
     Firmware = $false                  # Set Firmware switch to true or false as needed
-    Restart = $false                   # Set Restart switch to true if a restart is required after the operation
-    Shutdown = $false                  # Set Shutdown switch to true if a shutdown is required after the operation
     Screenshot = $false                # Set Screenshot switch to true to capture screenshots during the operation
     SkipAutopilot = $false             # Set SkipAutopilot switch to true to skip the Autopilot Task routine
     SkipODT = $false                   # Set SkipODT switch to true to skip the ODT Task routine
     ZTI = $true                        # ZTI parameter for zero-touch installation
     ImageFileUrl = "http://autoprovision.afca.org.au:8080/install.wim"  # URL to the image file
     OSImageIndex = "1"                 # Image Index
-    MSCatalogNetDrivers = $false       # Disable downloading network drivers from Microsoft Catalog
 }
 
 Start-OSDCloud @Params
