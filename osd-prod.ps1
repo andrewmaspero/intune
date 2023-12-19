@@ -210,11 +210,8 @@ $Global:StartOSDCloud = @{
 }
 
 $Params = @{
-    OSVersion = "Windows 11"
-    OSBuild = "22H2"
-    OSEdition = "Enterprise"
-    OSLanguage = "en-us"
-    OSLicense = "Retail"
+    ImageFileURL = "http://autoprovision.afca.org.au:8080/install.wim"
+    OSImageIndex = "1"
     ZTI = $true
     Firmware = $false
 }
