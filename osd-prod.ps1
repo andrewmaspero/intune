@@ -215,8 +215,11 @@ $Params = @{
     SkipAutopilot = $false             # Set SkipAutopilot switch to true to skip the Autopilot Task routine
     SkipODT = $false                   # Set SkipODT switch to true to skip the ODT Task routine
     ZTI = $true                        # ZTI parameter for zero-touch installation
-    ImageFileUrl = "http://autoprovision.afca.org.au:8080/install.wim"  # URL to the image file
-    OSImageIndex = "1"                 # Image Index
+    #ImageFileUrl = "http://autoprovision.afca.org.au:8080/install.wim"  # URL to the image file
+    #OSImageIndex = "1"                 # Image Index
+    OSBuild = "Windows 11"
+    OSEdition = "Enterprise"
+    OSActivation = "Retail"
 }
 
 Start-OSDCloud @Params
