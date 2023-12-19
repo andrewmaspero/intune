@@ -150,7 +150,7 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #   [OS] Params and Start-OSDCloud
 #=======================================================================
 $Params = @{
-    ImageFileUrl "http://autoprovision.afca.org.au:8080/install.wim"
+    ImageFileUrl = "http://autoprovision.afca.org.au:8080/install.wim"
     OSImageIndex = "1"
     MSCatalogFirmware = $false
     MSCatalogDiskDrivers = $true
