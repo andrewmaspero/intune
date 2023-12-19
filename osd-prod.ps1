@@ -210,16 +210,13 @@ $Global:StartOSDCloud = @{
 }
 
 $Params = @{
-    Firmware = $false                  # Set Firmware switch to true or false as needed
-    Screenshot = $false                # Set Screenshot switch to true to capture screenshots during the operation
-    SkipAutopilot = $false             # Set SkipAutopilot switch to true to skip the Autopilot Task routine
-    SkipODT = $false                   # Set SkipODT switch to true to skip the ODT Task routine
-    ZTI = $true                        # ZTI parameter for zero-touch installation
-    #ImageFileUrl = "http://autoprovision.afca.org.au:8080/install.wim"  # URL to the image file
-    #OSImageIndex = "1"                 # Image Index
-    OSBuild = "Windows 11"
+    OSVersion = "Windows 11"
+    OSBuild = "22H2"
     OSEdition = "Enterprise"
-    OSActivation = "Retail"
+    OSLanguage = "en-us"
+    OSLicense = "Retail"
+    ZTI = $true
+    Firmware = $false
 }
 
 Start-OSDCloud @Params
