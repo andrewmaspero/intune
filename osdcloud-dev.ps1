@@ -163,69 +163,6 @@ Start-OSDCloud @Params
 
 #Start-OSDCloud -ImageFileUrl "http://autoprovision.local:8080/install.wim" -OSImageIndex "1" -ZTI
 
-function Copy-FromBootImage {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string] $FileName
-    )
-    process {
-        $SourceFilePath = Join-Path -Path "D:\OSDCloud\Scripts" -ChildPath $FileName
-        $DestinationFolderPath = "C:\temp"
-        if (-not $env:SystemDrive) {
-            Write-Error "This script must be run in a WinPE environment."
-            return
-        }
-        try {
-            if (Test-Path -Path $SourceFilePath) {
-                if (-not (Test-Path -Path $DestinationFolderPath)) {
-                    New-Item -ItemType Directory -Path $DestinationFolderPath | Out-Null
-                }
-                $fullDestinationPath = Join-Path -Path $DestinationFolderPath -ChildPath $FileName
-                Copy-Item -Path $SourceFilePath -Destination $fullDestinationPath -Force -ErrorAction Stop
-                Write-Output "File '$SourceFilePath' has been copied to '$fullDestinationPath'"
-            } else {
-                throw "Source file '$SourceFilePath' does not exist."
-            }
-        }
-        catch {
-            Write-Error $_.Exception.Message
-        }
-    }
-}
-
-function Copy-FolderToTemp {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string] $SourceFolder
-    )
-    process {
-        $DestinationFolderPath = "C:\temp"
-
-        if (-not $env:SystemDrive) {
-            Write-Error "This script must be run in a WinPE environment."
-            return
-        }
-
-        try {
-            if (Test-Path -Path $SourceFolder -PathType Container) {
-                $fullDestinationPath = $DestinationFolderPath
-                if (-not (Test-Path -Path $fullDestinationPath)) {
-                    New-Item -ItemType Directory -Path $fullDestinationPath | Out-Null
-                }
-                Copy-Item -Path $SourceFolder -Destination $fullDestinationPath -Recurse -Force -ErrorAction Stop
-                Write-Output "Folder '$SourceFolder' has been copied to '$fullDestinationPath'"
-            } else {
-                throw "Source folder '$SourceFolder' does not exist or is not a directory."
-            }
-        }
-        catch {
-            Write-Error $_.Exception.Message
-        }
-    }
-}
-
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -301,22 +238,35 @@ function Create-Folder {
 # Create script folder
 Create-Folder -FolderPath "C:\temp"
 
-#Assign PC to User
-Start-Process "E:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
-Start-Sleep -Seconds 1
+#Function to download files from local server
+function Start-DownloadingFiles {
+    param (
+        [string]$url = "http://autoprovision.local:8080/hosted_data/",
+        [string]$destination = "C:\temp"
+    )
 
-#Copy Files from Image to C: Drive
-Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
+    # Get list of all files from the URL
+    $response = Invoke-WebRequest -Uri $url
+
+    # Parse the HTML response to get the file links
+    $links = $response.Links.Href | Where-Object { $_ -match '\.\w+$' } 
+
+    # Download each file
+    foreach ($link in $links) {
+        $fileName = Split-Path $link -Leaf
+        $fileUrl = $url + $fileName
+        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
+
+        # Download the file
+        Invoke-WebRequest -Uri $fileUrl -OutFile $destinationPath
+    }
+}
+
+Start-DownloadingFiles
+
+#Assign PC to User
+Start-Process "C:\temp\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "OOBE-Startup-Script.ps1"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "Post-Install-Script.ps1"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "ServiceUI.exe"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "OOBE-Agent.exe"
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
