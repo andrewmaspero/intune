@@ -242,23 +242,28 @@ Create-Folder -FolderPath "C:\temp"
 function Start-DownloadingFiles {
     param (
         [string]$url = "http://autoprovision.local:8080/hosted_data/",
-        [string]$destination = "C:\temp"
+        [string]$destination = "C:\temp",
+        [string[]]$fileNames = @(
+            "OOBE-Agent.exe",
+            "OOBE-Startup-Script.ps1",
+            "OSDCloud-Assign-User.exe",
+            "Post-Install-Script.ps1",
+            "SendKeysSHIFTnF10.ps1",
+            "ServiceUI.exe",
+            "SpecialiseTaskScheduler.ps1"
+        )
     )
 
-    # Get list of all files from the URL
-    $response = Invoke-WebRequest -Uri $url
-
-    # Parse the HTML response to get the file links
-    $links = $response.Links.Href | Where-Object { $_ -match '\.\w+$' } 
+    # Create a new WebClient object
+    $webClient = New-Object System.Net.WebClient
 
     # Download each file
-    foreach ($link in $links) {
-        $fileName = Split-Path $link -Leaf
+    foreach ($fileName in $fileNames) {
         $fileUrl = $url + $fileName
         $destinationPath = Join-Path -Path $destination -ChildPath $fileName
 
         # Download the file
-        Invoke-WebRequest -Uri $fileUrl -OutFile $destinationPath
+        $webClient.DownloadFile($fileUrl, $destinationPath)
     }
 }
 
