@@ -161,9 +161,9 @@ $Params = @{
     Firmware = $false
 }
 
-#Start-OSDCloud @Params
+Start-OSDCloud @Params
 
-Start-OSDCloud -ImageFileUrl "http://autoprovision.local:8080/install.wim" -OSImageIndex "1" -ZTI
+#Start-OSDCloud -ImageFileUrl "http://autoprovision.local:8080/install.wim" -OSImageIndex "1" -ZTI
 
 function Copy-FromBootImage {
     [CmdletBinding()]
@@ -304,7 +304,7 @@ function Create-Folder {
 Create-Folder -FolderPath "C:\temp"
 
 #Assign PC to User
-Start-Process "D:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "E:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #Copy Files from Image to C: Drive
