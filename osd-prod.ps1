@@ -149,140 +149,19 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #=======================================================================
 #   [OS] Params and Start-OSDCloud
 #=======================================================================
-$Global:StartOSDCloud = @{
-    LaunchMethod = 'OSDCloudCLI'
-    AutopilotJsonChildItem = $null
-    AutopilotJsonItem = $null
-    AutopilotJsonName = $null
-    AutopilotJsonObject = $null
-    AutopilotOOBEJsonChildItem = $null
-    AutopilotOOBEJsonItem = $null
-    AutopilotOOBEJsonName = $null
-    AutopilotOOBEJsonObject = $null
-    Function = $MyInvocation.MyCommand.Name
-    GetDiskFixed = $null
-    GetFeatureUpdate = $null
-    ImageFileFullName = $null
-    ImageFileItem = $null
-    ImageFileName = $null
-    ImageFileSource = $null
-    ImageFileDestination = $null
-    ImageFileUrl = $ImageFileUrl
-    IsOnBattery = Get-OSDGather -Property IsOnBattery
-    Manufacturer = $Manufacturer
-    MSCatalogFirmware = $false
-    MSCatalogDiskDrivers = $true
-    MSCatalogNetDrivers = $false
-    MSCatalogScsiDrivers = $true
-    OOBEDeployJsonChildItem = $null
-    OOBEDeployJsonItem = $null
-    OOBEDeployJsonName = $null
-    OOBEDeployJsonObject = $null
-    OSActivation = $OSActivation
-    OSBuild = $OSBuild
-    OSBuildMenu = $null
-    OSBuildNames = $null
-    OSEdition = $OSEdition
-    OSEditionId = $null
-    OSEditionMenu = $null
-    OSEditionNames = $null
-    OSImageIndex = $OSImageIndex
-    OSLanguage = $OSLanguage
-    OSLanguageMenu = $null
-    OSLanguageNames = $null
-    OSName = $OSName
-    OSNameMenu = $null
-    OSNames = @('Windows 11 23H2 x64','Windows 11 22H2 x64','Windows 11 21H2 x64','Windows 10 22H2 x64')
-    OSVersion = $OSVersion
-    OSVersionMenu = $null
-    OSVersionNames = @('Windows 11','Windows 10')
-    Product = $Product
-    Restart = $Restart
-    ScreenshotCapture = $false
-    ScreenshotPath = "$env:TEMP\Screenshots"
-    Shutdown = $Shutdown
-    SkipAutopilot = $SkipAutopilot
-    SkipAutopilotOOBE = $null
-    SkipODT = $SkipODT
-    SkipOOBEDeploy = $null
-    TimeStart = Get-Date
-    ZTI = $ZTI
-}
-
 $Params = @{
-    ImageFileURL = "http://autoprovision.afca.org.au:8080/install.wim"
-    OSImageIndex = "1"
+    OSVersion = "Windows 11"
+    OSBuild = "22H2"
+    OSEdition = "Enterprise"
+    OSLanguage = "en-us"
+    OSLicense = "Volume"
     ZTI = $true
     Firmware = $false
 }
 
 Start-OSDCloud @Params
 
-
-#Start-OSDCloud -ImageFileUrl  -OSImageIndex "1" -ZTI
-
-function Copy-FromBootImage {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string] $FileName
-    )
-    process {
-        $SourceFilePath = Join-Path -Path "E:\OSDCloud\Scripts" -ChildPath $FileName
-        $DestinationFolderPath = "C:\temp"
-        if (-not $env:SystemDrive) {
-            Write-Error "This script must be run in a WinPE environment."
-            return
-        }
-        try {
-            if (Test-Path -Path $SourceFilePath) {
-                if (-not (Test-Path -Path $DestinationFolderPath)) {
-                    New-Item -ItemType Directory -Path $DestinationFolderPath | Out-Null
-                }
-                $fullDestinationPath = Join-Path -Path $DestinationFolderPath -ChildPath $FileName
-                Copy-Item -Path $SourceFilePath -Destination $fullDestinationPath -Force -ErrorAction Stop
-                Write-Output "File '$SourceFilePath' has been copied to '$fullDestinationPath'"
-            } else {
-                throw "Source file '$SourceFilePath' does not exist."
-            }
-        }
-        catch {
-            Write-Error $_.Exception.Message
-        }
-    }
-}
-
-function Copy-FolderToTemp {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string] $SourceFolder
-    )
-    process {
-        $DestinationFolderPath = "C:\temp"
-
-        if (-not $env:SystemDrive) {
-            Write-Error "This script must be run in a WinPE environment."
-            return
-        }
-
-        try {
-            if (Test-Path -Path $SourceFolder -PathType Container) {
-                $fullDestinationPath = $DestinationFolderPath
-                if (-not (Test-Path -Path $fullDestinationPath)) {
-                    New-Item -ItemType Directory -Path $fullDestinationPath | Out-Null
-                }
-                Copy-Item -Path $SourceFolder -Destination $fullDestinationPath -Recurse -Force -ErrorAction Stop
-                Write-Output "Folder '$SourceFolder' has been copied to '$fullDestinationPath'"
-            } else {
-                throw "Source folder '$SourceFolder' does not exist or is not a directory."
-            }
-        }
-        catch {
-            Write-Error $_.Exception.Message
-        }
-    }
-}
+#Start-OSDCloud -ImageFileUrl "http://autoprovision.afca.org.au:8080/install.wim" -OSImageIndex "1" -ZTI
 
 function Send-EventUpdate {
     param(
@@ -359,22 +238,41 @@ function Create-Folder {
 # Create script folder
 Create-Folder -FolderPath "C:\temp"
 
-#Assign PC to User
-Start-Process "E:\OSDCloud\Scripts\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
-Start-Sleep -Seconds 1
+#Function to download files from local server
+function Start-DownloadingFiles {
+    param (
+        [string]$url = "http://autoprovision.afca.org.au:8080/hosted_data/",
+        [string]$destination = "C:\temp",
+        [string[]]$fileNames = @(
+            "OOBE-Agent.exe",
+            "OOBE-Startup-Script.ps1",
+            "OSDCloud-Assign-User.exe",
+            "Post-Install-Script.ps1",
+            "SendKeysSHIFTnF10.ps1",
+            "ServiceUI.exe",
+            "SpecialiseTaskScheduler.ps1"
+            "Reboot-URI-Detection.ps1"
+        )
+    )
 
-#Copy Files from Image to C: Drive
-Copy-FromBootImage -FileName "SpecialiseTaskScheduler.ps1"
+    # Create a new WebClient object
+    $webClient = New-Object System.Net.WebClient
+
+    # Download each file
+    foreach ($fileName in $fileNames) {
+        $fileUrl = $url + $fileName
+        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
+
+        # Download the file
+        $webClient.DownloadFile($fileUrl, $destinationPath)
+    }
+}
+
+Start-DownloadingFiles
+
+#Assign PC to User
+Start-Process "C:\temp\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "OOBE-Startup-Script.ps1"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "SendKeysSHIFTnF10.ps1"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "Post-Install-Script.ps1"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "ServiceUI.exe"
-Start-Sleep -Seconds 1
-Copy-FromBootImage -FileName "OOBE-Agent.exe"
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
