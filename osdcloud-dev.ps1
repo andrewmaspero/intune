@@ -25,7 +25,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "https://autoprovision.local/api/osdcloud-event-updates/"
+    $url = "https://autoprovision.dev/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -99,7 +99,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "https://autoprovision.local/api/osdcloud-event-updates/"
+    $url = "https://autoprovision.dev/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -161,7 +161,7 @@ $Params = @{
 
 Start-OSDCloud @Params
 
-#Start-OSDCloud -ImageFileUrl "http://autoprovision.local:8080/install.wim" -OSImageIndex "1" -ZTI
+#Start-OSDCloud -ImageFileUrl "http://autoprovision.dev:8080/install.wim" -OSImageIndex "1" -ZTI
 
 function Send-EventUpdate {
     param(
@@ -186,7 +186,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "https://autoprovision.local/api/osdcloud-event-updates/"
+    $url = "https://autoprovision.dev/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -241,7 +241,7 @@ Create-Folder -FolderPath "C:\temp"
 #Function to download files from local server
 function Start-DownloadingFiles {
     param (
-        [string]$url = "http://autoprovision.local:8080/hosted_data/",
+        [string]$url = "http://autoprovision.dev:8080/hosted_data/",
         [string]$destination = "C:\temp",
         [string[]]$fileNames = @(
             "OOBE-Agent.exe",
