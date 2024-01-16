@@ -248,10 +248,24 @@ function Start-DownloadingFiles {
             "Post-Install-Script.ps1",
             "SendKeysSHIFTnF10.ps1",
             "service_ui.exe",
-            "SpecialiseTaskScheduler.ps1"
+            "SpecialiseTaskScheduler.ps1",
             "Reboot-URI-Detection.ps1"
         )
     )
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
     # Create a new WebClient object
     $webClient = New-Object System.Net.WebClient
@@ -264,6 +278,9 @@ function Start-DownloadingFiles {
         # Download the file
         $webClient.DownloadFile($fileUrl, $destinationPath)
     }
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
 }
 
 Start-DownloadingFiles
