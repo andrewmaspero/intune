@@ -161,8 +161,6 @@ $Params = @{
 
 Start-OSDCloud @Params
 
-#Start-OSDCloud -ImageFileUrl "http://autoprovision.afca.org.au:8080/install.wim" -OSImageIndex "1" -ZTI
-
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -226,7 +224,7 @@ function Send-EventUpdate {
 #Installation Finished
 Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "COMPLETED"
 
-function Create-Folder {
+function New-Directory {
     param (
         [string]$FolderPath
     )
@@ -236,20 +234,20 @@ function Create-Folder {
 }
 
 # Create script folder
-Create-Folder -FolderPath "C:\temp"
+New-Directory -FolderPath "C:\temp"
 
 #Function to download files from local server
 function Start-DownloadingFiles {
     param (
-        [string]$url = "http://autoprovision.afca.org.au:8080/hosted_data/",
+        [string]$url = "https://autoprovision.afca.org.au/hosted-files/",
         [string]$destination = "C:\temp",
         [string[]]$fileNames = @(
-            "OOBE-Agent.exe",
+            "oobe_input_automation_agent.exe",
             "OOBE-Startup-Script.ps1",
-            "OSDCloud-Assign-User.exe",
+            "user_assignment_agent.exe",
             "Post-Install-Script.ps1",
             "SendKeysSHIFTnF10.ps1",
-            "ServiceUI.exe",
+            "service_ui.exe",
             "SpecialiseTaskScheduler.ps1"
             "Reboot-URI-Detection.ps1"
         )
@@ -271,7 +269,7 @@ function Start-DownloadingFiles {
 Start-DownloadingFiles
 
 #Assign PC to User
-Start-Process "C:\temp\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "C:\temp\user_assignment_agent.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #================================================
