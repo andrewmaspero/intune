@@ -241,15 +241,15 @@ Create-Folder -FolderPath "C:\temp"
 #Function to download files from local server
 function Start-DownloadingFiles {
     param (
-        [string]$url = "http://autoprovision.dev:8080/hosted_data/",
+        [string]$url = "https://autoprovision.dev/hosted_data/",
         [string]$destination = "C:\temp",
         [string[]]$fileNames = @(
-            "OOBE-Agent.exe",
+            "ws_user_assignment.exe",
             "OOBE-Startup-Script.ps1",
-            "OSDCloud-Assign-User.exe",
+            "ws_oobe_agent.exe",
             "Post-Install-Script.ps1",
             "SendKeysSHIFTnF10.ps1",
-            "ServiceUI.exe",
+            "service_ui.exe",
             "SpecialiseTaskScheduler.ps1"
             "Reboot-URI-Detection.ps1"
         )
@@ -271,7 +271,7 @@ function Start-DownloadingFiles {
 Start-DownloadingFiles
 
 #Assign PC to User
-Start-Process "C:\temp\OSDCloud-Assign-User.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "C:\temp\ws_oobe_agent.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #================================================
