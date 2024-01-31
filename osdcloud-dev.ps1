@@ -62,68 +62,6 @@ function Send-EventUpdate {
     return $response
 }
 
-function New-Directory {
-    param (
-        [string]$FolderPath
-    )
-    If (!(Test-Path -Path $FolderPath)) {
-        New-Item -Path $FolderPath -ItemType Directory -Force | Out-Null
-    }
-}
-
-# Create script folder
-New-Directory -FolderPath "X:\temp"
-
-
-function Start-DownloadingFiles {
-    param (
-        [string]$url = "https://autoprovision.dev/hosted-files/",
-        [string]$destination = "X:\temp",
-        [string[]]$fileNames = @(
-            "ws_oobe_agent.exe",
-            "OOBE-Startup-Script.ps1",
-            "ws_user_assignment.exe",
-            "Post-Install-Script.ps1",
-            "SendKeysSHIFTnF10.ps1",
-            "service_ui.exe",
-            "SpecialiseTaskScheduler.ps1",
-            "Reboot-URI-Detection.ps1"
-        )
-    )
-
-    # Define a policy that bypasses all SSL certificate checks
-    Add-Type -TypeDefinition @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
-    # Create a new WebClient object
-    $webClient = New-Object System.Net.WebClient
-
-    # Download each file
-    foreach ($fileName in $fileNames) {
-        $fileUrl = $url + $fileName
-        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
-
-        # Download the file
-        $webClient.DownloadFile($fileUrl, $destinationPath)
-    }
-
-    # Reset the certificate policy
-    [System.Net.ServicePointManager]::CertificatePolicy = $null
-}
-
-Start-DownloadingFiles
-
-
 #Start OSD Commands
 
 Send-EventUpdate -eventStage "OSD Cloud Starting Up" -eventStatus "IN_PROGRESS"
@@ -303,19 +241,33 @@ Create-Folder -FolderPath "C:\temp"
 #Function to download files from local server
 function Start-DownloadingFiles {
     param (
-        [string]$url = "https://autoprovision.dev/hosted_data/",
+        [string]$url = "https://autoprovision.dev/hosted-files/",
         [string]$destination = "C:\temp",
         [string[]]$fileNames = @(
-            "ws_user_assignment.exe",
-            "OOBE-Startup-Script.ps1",
             "ws_oobe_agent.exe",
+            "OOBE-Startup-Script.ps1",
+            "ws_user_assignment.exe",
             "Post-Install-Script.ps1",
             "SendKeysSHIFTnF10.ps1",
             "service_ui.exe",
-            "SpecialiseTaskScheduler.ps1"
+            "SpecialiseTaskScheduler.ps1",
             "Reboot-URI-Detection.ps1"
         )
     )
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
     # Create a new WebClient object
     $webClient = New-Object System.Net.WebClient
@@ -328,6 +280,9 @@ function Start-DownloadingFiles {
         # Download the file
         $webClient.DownloadFile($fileUrl, $destinationPath)
     }
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
 }
 
 Start-DownloadingFiles
