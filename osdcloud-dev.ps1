@@ -161,8 +161,6 @@ $Params = @{
 
 Start-OSDCloud @Params
 
-#Start-OSDCloud -ImageFileUrl "http://autoprovision.dev:8080/install.wim" -OSImageIndex "1" -ZTI
-
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -226,7 +224,7 @@ function Send-EventUpdate {
 #Installation Finished
 Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "COMPLETED"
 
-function Create-Folder {
+function New-Directory {
     param (
         [string]$FolderPath
     )
@@ -236,8 +234,9 @@ function Create-Folder {
 }
 
 # Create script folder
-Create-Folder -FolderPath "C:\temp"
+New-Directory -FolderPath "C:\temp"
 
+#Function to download files from local server
 #Function to download files from local server
 function Start-DownloadingFiles {
     param (
@@ -288,7 +287,7 @@ function Start-DownloadingFiles {
 Start-DownloadingFiles
 
 #Assign PC to User
-Start-Process "C:\temp\ws_oobe_agent.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "C:\temp\ws_user_assignment.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #================================================
