@@ -25,7 +25,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "https://autoprovision.afca.org.au/api/osdcloud-event-updates/"
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -99,7 +99,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "https://autoprovision.afca.org.au/api/osdcloud-event-updates/"
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -184,7 +184,7 @@ function Send-EventUpdate {
     }
 
     # Endpoint URL
-    $url = "https://autoprovision.afca.org.au/api/osdcloud-event-updates/"
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
 
     $body = @{
         "serial_number" = $systemInfo.serial_number
@@ -240,7 +240,7 @@ New-Directory -FolderPath "C:\temp"
 #Function to download files from local server
 function Start-DownloadingFiles {
     param (
-        [string]$url = "https://autoprovision.afca.org.au/hosted-files/",
+        [string]$url = "https://autopro.afca.org.au/hosted-files/",
         [string]$destination = "C:\temp",
         [string[]]$fileNames = @(
             "ws_oobe_agent.exe",
