@@ -237,14 +237,15 @@ function New-Directory {
 New-Directory -FolderPath "C:\temp"
 
 #Function to download files from local server
+#Function to download files from local server
 function Start-DownloadingFiles {
     param (
         [string]$url = "https://autoprovision.afca.org.au/hosted-files/",
         [string]$destination = "C:\temp",
         [string[]]$fileNames = @(
-            "oobe_input_automation_agent.exe",
+            "ws_oobe_agent.exe",
             "OOBE-Startup-Script.ps1",
-            "user_assignment_agent.exe",
+            "ws_user_assignment.exe",
             "Post-Install-Script.ps1",
             "SendKeysSHIFTnF10.ps1",
             "service_ui.exe",
@@ -286,7 +287,7 @@ function Start-DownloadingFiles {
 Start-DownloadingFiles
 
 #Assign PC to User
-Start-Process "C:\temp\user_assignment_agent.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+Start-Process "C:\temp\ws_user_assignment.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 Start-Sleep -Seconds 1
 
 #================================================
