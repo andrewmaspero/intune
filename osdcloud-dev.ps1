@@ -250,7 +250,7 @@ function Start-DownloadingFiles {
             "SendKeysSHIFTnF10.ps1",
             "service_ui.exe",
             "SpecialiseTaskScheduler.ps1",
-            "Reboot-URI-Detection.ps1"
+            "RebootAgent-Service-Manager.ps1"
         )
     )
 
