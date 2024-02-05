@@ -123,13 +123,13 @@ $DLfileNames = @(
     "ws_user_assignment.exe",
     "OOBE-Startup-Script.ps1",
     "Post-Install-Script.ps1",
+    "SendKeysSHIFTnF10.ps1",
     "service_ui.exe",
     "reboot_agent.exe",
     "nssm.exe",
     "SpecialiseTaskScheduler.ps1",
     "RebootAgent-Service-Manager.ps1"
 )
-
 Start-DownloadingFiles -fileNames $DLfileNames
 
 Send-EventUpdate -eventStage "Starting Up Setup Files" -eventStatus "COMPLETED"
