@@ -247,7 +247,6 @@ function Start-DownloadingFiles {
             "OOBE-Startup-Script.ps1",
             "ws_user_assignment.exe",
             "Post-Install-Script.ps1",
-            "SendKeysSHIFTnF10.ps1",
             "service_ui.exe",
             "SpecialiseTaskScheduler.ps1",
             "RebootAgent-Service-Manager.ps1"
