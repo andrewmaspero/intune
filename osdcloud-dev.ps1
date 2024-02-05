@@ -299,24 +299,10 @@ function Send-EventUpdate {
 #Installation Finished
 Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "COMPLETED"
 
-function New-Directory {
-    param (
-        [string]$FolderPath
-    )
-    If (!(Test-Path -Path $FolderPath)) {
-        New-Item -Path $FolderPath -ItemType Directory -Force | Out-Null
-    }
-}
-
-# Create script folder
-New-Directory -FolderPath "C:\temp"
-
-# Copy files to the destination directory
-function Copy-Files {
+function Copy-Everything {
     param (
         [string]$source,
-        [string]$destination,
-        [string[]]$fileNames
+        [string]$destination
     )
 
     # Ensure the destination directory exists
@@ -324,29 +310,11 @@ function Copy-Files {
         New-Item -Path $destination -ItemType Directory -Force | Out-Null
     }
 
-    # Copy each file to the destination directory
-    foreach ($file in $fileNames) {
-        $sourceFile = Join-Path -Path $source -ChildPath $file
-        if (Test-Path -Path $sourceFile) {
-            Copy-Item -Path $sourceFile -Destination $destination -Force
-        } else {
-            Write-Warning "File $sourceFile does not exist"
-        }
-    }
+    # Copy everything from the source directory to the destination directory
+    Copy-Item -Path "$source\*" -Destination $destination -Recurse -Force
 }
 
-$fileNames = @(
-    "ws_oobe_agent.exe",
-    "OOBE-Startup-Script.ps1",
-    "Post-Install-Script.ps1",
-    "service_ui.exe",
-    "reboot_agent.exe",
-    "nssm.exe",
-    "SpecialiseTaskScheduler.ps1",
-    "RebootAgent-Service-Manager.ps1"
-)
-
-Copy-Files -source "X:\temp" -destination "C:\temp" -fileNames $fileNames
+Copy-Everything -source "X:\temp" -destination "C:\temp"
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
