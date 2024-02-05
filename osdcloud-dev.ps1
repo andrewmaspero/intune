@@ -248,6 +248,8 @@ function Start-DownloadingFiles {
             "ws_user_assignment.exe",
             "Post-Install-Script.ps1",
             "service_ui.exe",
+            "reboot_agent.exe",
+            "nssm.exe",
             "SpecialiseTaskScheduler.ps1",
             "RebootAgent-Service-Manager.ps1"
         )
