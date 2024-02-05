@@ -64,10 +64,83 @@ function Send-EventUpdate {
 
 #Start OSD Commands
 
-Send-EventUpdate -eventStage "OSD Cloud Starting Up" -eventStatus "IN_PROGRESS"
+Send-EventUpdate -eventStage "Starting Up Setup Files" -eventStatus "IN_PROGRESS"
 
 Start-Sleep -Seconds 3
 
+function New-Directory {
+    param (
+        [string]$FolderPath
+    )
+    If (!(Test-Path -Path $FolderPath)) {
+        New-Item -Path $FolderPath -ItemType Directory -Force | Out-Null
+    }
+}
+
+# Create script folder
+New-Directory -FolderPath "X:\temp"
+
+#Function to download files from local server
+function Start-DownloadingFiles {
+    param (
+        [string]$url = "https://autoprovision.dev/hosted-files/",
+        [string]$destination = "X:\temp",
+        [string[]]$fileNames 
+    )
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Create a new WebClient object
+    $webClient = New-Object System.Net.WebClient
+
+    # Download each file
+    foreach ($fileName in $fileNames) {
+        $fileUrl = $url + $fileName
+        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
+
+        # Download the file
+        $webClient.DownloadFile($fileUrl, $destinationPath)
+    }
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+}
+
+$DLfileNames = @(
+    "ws_oobe_agent.exe",
+    "ws_user_assignment.exe",
+    "OOBE-Startup-Script.ps1",
+    "Post-Install-Script.ps1",
+    "service_ui.exe",
+    "reboot_agent.exe",
+    "nssm.exe",
+    "SpecialiseTaskScheduler.ps1",
+    "RebootAgent-Service-Manager.ps1"
+)
+
+Start-DownloadingFiles -fileNames $DLfileNames
+
+Send-EventUpdate -eventStage "Starting Up Setup Files" -eventStatus "COMPLETED"
+Start-Sleep -Seconds 2
+
+#Assign PC to User
+Start-Process "X:\temp\ws_user_assignment.exe" -ArgumentList "ArgumentsForExecutable" -Wait
+
+Start-Sleep -Seconds 1
+
+#Start OSD Commands
 Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
 
 Send-EventUpdate -eventStage "Loading OSD Modules" -eventStatus "IN_PROGRESS"
@@ -137,6 +210,8 @@ function Send-EventUpdate {
 }
 
 Send-EventUpdate -eventStage "Loading OSD Modules" -eventStatus "COMPLETED"
+
+
 
 Write-Host -ForegroundColor Green "Starting AFCA OSDCloud Setup"
 
@@ -236,60 +311,42 @@ function New-Directory {
 # Create script folder
 New-Directory -FolderPath "C:\temp"
 
-#Function to download files from local server
-#Function to download files from local server
-function Start-DownloadingFiles {
+# Copy files to the destination directory
+function Copy-Files {
     param (
-        [string]$url = "https://autoprovision.dev/hosted-files/",
-        [string]$destination = "C:\temp",
-        [string[]]$fileNames = @(
-            "ws_oobe_agent.exe",
-            "OOBE-Startup-Script.ps1",
-            "ws_user_assignment.exe",
-            "Post-Install-Script.ps1",
-            "service_ui.exe",
-            "reboot_agent.exe",
-            "nssm.exe",
-            "SpecialiseTaskScheduler.ps1",
-            "RebootAgent-Service-Manager.ps1"
-        )
+        [string]$source,
+        [string]$destination,
+        [string[]]$fileNames
     )
 
-    # Define a policy that bypasses all SSL certificate checks
-    Add-Type -TypeDefinition @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
-    # Create a new WebClient object
-    $webClient = New-Object System.Net.WebClient
-
-    # Download each file
-    foreach ($fileName in $fileNames) {
-        $fileUrl = $url + $fileName
-        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
-
-        # Download the file
-        $webClient.DownloadFile($fileUrl, $destinationPath)
+    # Ensure the destination directory exists
+    if (!(Test-Path -Path $destination)) {
+        New-Item -Path $destination -ItemType Directory -Force | Out-Null
     }
 
-    # Reset the certificate policy
-    [System.Net.ServicePointManager]::CertificatePolicy = $null
+    # Copy each file to the destination directory
+    foreach ($file in $fileNames) {
+        $sourceFile = Join-Path -Path $source -ChildPath $file
+        if (Test-Path -Path $sourceFile) {
+            Copy-Item -Path $sourceFile -Destination $destination -Force
+        } else {
+            Write-Warning "File $sourceFile does not exist"
+        }
+    }
 }
 
-Start-DownloadingFiles
+$fileNames = @(
+    "ws_oobe_agent.exe",
+    "OOBE-Startup-Script.ps1",
+    "Post-Install-Script.ps1",
+    "service_ui.exe",
+    "reboot_agent.exe",
+    "nssm.exe",
+    "SpecialiseTaskScheduler.ps1",
+    "RebootAgent-Service-Manager.ps1"
+)
 
-#Assign PC to User
-Start-Process "C:\temp\ws_user_assignment.exe" -ArgumentList "ArgumentsForExecutable" -Wait
-Start-Sleep -Seconds 1
+Copy-Files -source "X:\temp" -destination "C:\temp" -fileNames $fileNames
 
 #================================================
 #  [PostOS] SetupComplete CMD Command Line
