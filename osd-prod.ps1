@@ -183,6 +183,10 @@ $Params = @{
     OSLicense = "Volume"
     ZTI = $true
     Firmware = $false
+    WindowsUpdate = $true
+    WindowsUpdateDrivers = $true
+    WindowsDefenderUpdate = $true
+    SetTimeZone = $true
 }
 
 Start-OSDCloud @Params
