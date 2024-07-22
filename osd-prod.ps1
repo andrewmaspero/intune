@@ -39,25 +39,9 @@ function Send-EventUpdate {
     }
     $bodyJson = $body | ConvertTo-Json
 
-    # Define a policy that bypasses all SSL certificate checks
-    Add-Type -TypeDefinition @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
     # Send the request
     $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
 
-    # Reset the certificate policy
-    [System.Net.ServicePointManager]::CertificatePolicy = $null
 
     return $response
 }
@@ -88,20 +72,6 @@ function Start-DownloadingFiles {
         [string[]]$fileNames 
     )
 
-    # Define a policy that bypasses all SSL certificate checks
-    Add-Type -TypeDefinition @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
     # Create a new WebClient object
     $webClient = New-Object System.Net.WebClient
 
@@ -114,8 +84,6 @@ function Start-DownloadingFiles {
         $webClient.DownloadFile($fileUrl, $destinationPath)
     }
 
-    # Reset the certificate policy
-    [System.Net.ServicePointManager]::CertificatePolicy = $null
 }
 
 $DLfileNames = @(
@@ -186,25 +154,8 @@ function Send-EventUpdate {
     }
     $bodyJson = $body | ConvertTo-Json
 
-    # Define a policy that bypasses all SSL certificate checks
-    Add-Type -TypeDefinition @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
     # Send the request
     $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
-
-    # Reset the certificate policy
-    [System.Net.ServicePointManager]::CertificatePolicy = $null
 
     return $response
 }
@@ -273,25 +224,8 @@ function Send-EventUpdate {
     }
     $bodyJson = $body | ConvertTo-Json
 
-    # Define a policy that bypasses all SSL certificate checks
-    Add-Type -TypeDefinition @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
     # Send the request
     $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
-
-    # Reset the certificate policy
-    [System.Net.ServicePointManager]::CertificatePolicy = $null
 
     return $response
 }
