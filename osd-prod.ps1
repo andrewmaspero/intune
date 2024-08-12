@@ -177,16 +177,12 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #=======================================================================
 $Params = @{
     OSVersion = "Windows 11"
-    OSBuild = "22H2"
+    OSBuild = "22H3"
     OSEdition = "Enterprise"
     OSLanguage = "en-us"
     OSLicense = "Volume"
     ZTI = $true
     Firmware = $false
-    WindowsUpdate = $true
-    WindowsUpdateDrivers = $true
-    WindowsDefenderUpdate = $true
-    SetTimeZone = $true
 }
 
 Start-OSDCloud @Params
