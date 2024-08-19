@@ -176,13 +176,10 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #   [OS] Params and Start-OSDCloud
 #=======================================================================
 $Params = @{
-    OSVersion = "Windows 11"
-    OSBuild = "22H3"
-    OSEdition = "Enterprise"
+    $ImageFileUrl = "https://autopro.afca.org.au/hosted-files/Windows11_23H2_22621_3958_WITH_ALLDRIVERS_WIM.wim"
+    $ImageIndex = 1
     OSLanguage = "en-us"
-    OSLicense = "Volume"
     ZTI = $true
-    Firmware = $false
 }
 
 Start-OSDCloud @Params
