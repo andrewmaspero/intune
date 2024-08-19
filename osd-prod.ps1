@@ -1,7 +1,6 @@
 #================================================
 #   [OSDCloud]
 #================================================
-
 function Send-EventUpdate {
     param(
         [Parameter(Mandatory=$true)] [string] $eventStage,
@@ -178,7 +177,7 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 
 $URL = "https://autopro.afca.org.au/hosted-files/Windows11_23H2_22621_3958_WITH_ALLDRIVERS_WIM.wim"
 
-Start-OSDCloud -ImageFileUrl $URL -ImageIndex 1 -ZTI true
+Start-OSDCloud -ImageFileUrl $URL -ImageIndex 1 -ZTI
 
 function Send-EventUpdate {
     param(
