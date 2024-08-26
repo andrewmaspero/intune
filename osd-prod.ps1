@@ -133,7 +133,65 @@ Start-DownloadingFiles -fileNames $DLfileNames
 
 Send-EventUpdate -eventStage "Starting Up Setup Files" -eventStatus "COMPLETED"
 Start-Sleep -Seconds 2
+function Send-EventUpdate {
+    param(
+        [Parameter(Mandatory=$true)] [string] $eventStage,
+        [Parameter(Mandatory=$true)] [string] $eventStatus
+    )
 
+    # Get system info
+    $bios = Get-CimInstance -ClassName Win32_BIOS
+    $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+    $physicalMemory = Get-CimInstance -ClassName Win32_PhysicalMemory
+    $baseboard = Get-CimInstance -ClassName Win32_BaseBoard
+    $processor = Get-CimInstance -ClassName Win32_Processor
+
+    $systemInfo = [PSCustomObject]@{
+        'serial_number' = $bios.SerialNumber
+        'manafacture'  = $bios.Manufacturer
+        'model'         = $computerSystem.Model
+        'ram'     = "{0:N2} GB" -f (($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB)  # Convert memory to string and append " GB"
+        'baseboard' = $baseboard.Product
+        'processor' = $processor.Name
+    }
+
+    # Endpoint URL
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
+
+    $body = @{
+        "serial_number" = $systemInfo.serial_number
+        "event_stage" = $eventStage
+        "event_status" = $eventStatus
+        "manufacture" = $systemInfo.manafacture
+        "model" = $systemInfo.model
+        "baseboard" = $systemInfo.baseboard
+        "memory" = $systemInfo.ram
+        "processor" = $systemInfo.processor
+    }
+    $bodyJson = $body | ConvertTo-Json
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Send the request
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+
+    return $response
+}
 #Assign PC to User
 Start-Process "X:\temp\ws_user_assignment.exe" -ArgumentList "ArgumentsForExecutable" -Wait
 
@@ -161,6 +219,42 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #=======================================================================
 #   [OS] Params and Start-OSDCloud
 #=======================================================================
+function Start-DownloadingFiles {
+    param (
+        [string]$url = "https://autopro.afca.org.au/hosted-files/",
+        [string]$destination = "X:\temp",
+        [string[]]$fileNames 
+    )
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Create a new WebClient object
+    $webClient = New-Object System.Net.WebClient
+
+    # Download each file
+    foreach ($fileName in $fileNames) {
+        $fileUrl = $url + $fileName
+        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
+
+        # Download the file
+        $webClient.DownloadFile($fileUrl, $destinationPath)
+    }
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+}
 function Get-ImageChecksum {
     param (
         [string]$ChecksumFileName,
@@ -181,7 +275,42 @@ function Get-ImageChecksum {
     $ChecksumValue = Get-Content -Path $LocalChecksumPath -Raw
     return $ChecksumValue.Trim()  # Trim to remove any extraneous whitespace
 }
+function Start-DownloadingFiles {
+    param (
+        [string]$url = "https://autopro.afca.org.au/hosted-files/",
+        [string]$destination = "X:\temp",
+        [string[]]$fileNames 
+    )
 
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Create a new WebClient object
+    $webClient = New-Object System.Net.WebClient
+
+    # Download each file
+    foreach ($fileName in $fileNames) {
+        $fileUrl = $url + $fileName
+        $destinationPath = Join-Path -Path $destination -ChildPath $fileName
+
+        # Download the file
+        $webClient.DownloadFile($fileUrl, $destinationPath)
+    }
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+}
 function Start-DownloadImageOrc {
     param (
         [string]$ImageFileNameOnWebServer,
@@ -216,7 +345,65 @@ function Start-DownloadImageOrc {
 
     return $Destination
 }
+function Send-EventUpdate {
+    param(
+        [Parameter(Mandatory=$true)] [string] $eventStage,
+        [Parameter(Mandatory=$true)] [string] $eventStatus
+    )
 
+    # Get system info
+    $bios = Get-CimInstance -ClassName Win32_BIOS
+    $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+    $physicalMemory = Get-CimInstance -ClassName Win32_PhysicalMemory
+    $baseboard = Get-CimInstance -ClassName Win32_BaseBoard
+    $processor = Get-CimInstance -ClassName Win32_Processor
+
+    $systemInfo = [PSCustomObject]@{
+        'serial_number' = $bios.SerialNumber
+        'manafacture'  = $bios.Manufacturer
+        'model'         = $computerSystem.Model
+        'ram'     = "{0:N2} GB" -f (($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB)  # Convert memory to string and append " GB"
+        'baseboard' = $baseboard.Product
+        'processor' = $processor.Name
+    }
+
+    # Endpoint URL
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
+
+    $body = @{
+        "serial_number" = $systemInfo.serial_number
+        "event_stage" = $eventStage
+        "event_status" = $eventStatus
+        "manufacture" = $systemInfo.manafacture
+        "model" = $systemInfo.model
+        "baseboard" = $systemInfo.baseboard
+        "memory" = $systemInfo.ram
+        "processor" = $systemInfo.processor
+    }
+    $bodyJson = $body | ConvertTo-Json
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Send the request
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+
+    return $response
+}
 function Start-CheckAndCacheImageToUSBOrc {
     param (
         [string]$ImageFileName,
@@ -260,7 +447,65 @@ function Start-CheckAndCacheImageToUSBOrc {
         return Start-DownloadImageOrc -ImageFileNameOnWebServer $ImageFileName -ChecksumFileNameOnWebServer $ChecksumFileName -Destination "C:\OSDCloud\OS"
     }
 }
+function Send-EventUpdate {
+    param(
+        [Parameter(Mandatory=$true)] [string] $eventStage,
+        [Parameter(Mandatory=$true)] [string] $eventStatus
+    )
 
+    # Get system info
+    $bios = Get-CimInstance -ClassName Win32_BIOS
+    $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+    $physicalMemory = Get-CimInstance -ClassName Win32_PhysicalMemory
+    $baseboard = Get-CimInstance -ClassName Win32_BaseBoard
+    $processor = Get-CimInstance -ClassName Win32_Processor
+
+    $systemInfo = [PSCustomObject]@{
+        'serial_number' = $bios.SerialNumber
+        'manafacture'  = $bios.Manufacturer
+        'model'         = $computerSystem.Model
+        'ram'     = "{0:N2} GB" -f (($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB)  # Convert memory to string and append " GB"
+        'baseboard' = $baseboard.Product
+        'processor' = $processor.Name
+    }
+
+    # Endpoint URL
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
+
+    $body = @{
+        "serial_number" = $systemInfo.serial_number
+        "event_stage" = $eventStage
+        "event_status" = $eventStatus
+        "manufacture" = $systemInfo.manafacture
+        "model" = $systemInfo.model
+        "baseboard" = $systemInfo.baseboard
+        "memory" = $systemInfo.ram
+        "processor" = $systemInfo.processor
+    }
+    $bodyJson = $body | ConvertTo-Json
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Send the request
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+
+    return $response
+}
 #Set OSDCloud Vars
 $Global:MyOSDCloud = [ordered]@{
     updateDiskDrivers              = [bool]$False
@@ -289,6 +534,67 @@ $ChecksumFileName = "Windows11_23H2_LATEST_ALLDRIVERS.sha256"
 $ImagePath = Start-CheckAndCacheImageToUSBOrc -ImageFileName $ImageFileName -ChecksumFileName $ChecksumFileName
 
 Start-OSDCloud -ImageFile $ImagePath -ImageIndex 1 -ZTI
+
+
+function Send-EventUpdate {
+    param(
+        [Parameter(Mandatory=$true)] [string] $eventStage,
+        [Parameter(Mandatory=$true)] [string] $eventStatus
+    )
+
+    # Get system info
+    $bios = Get-CimInstance -ClassName Win32_BIOS
+    $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+    $physicalMemory = Get-CimInstance -ClassName Win32_PhysicalMemory
+    $baseboard = Get-CimInstance -ClassName Win32_BaseBoard
+    $processor = Get-CimInstance -ClassName Win32_Processor
+
+    $systemInfo = [PSCustomObject]@{
+        'serial_number' = $bios.SerialNumber
+        'manafacture'  = $bios.Manufacturer
+        'model'         = $computerSystem.Model
+        'ram'     = "{0:N2} GB" -f (($physicalMemory.Capacity | Measure-Object -Sum).Sum / 1GB)  # Convert memory to string and append " GB"
+        'baseboard' = $baseboard.Product
+        'processor' = $processor.Name
+    }
+
+    # Endpoint URL
+    $url = "https://autopro.afca.org.au/api/osdcloud-event-updates/"
+
+    $body = @{
+        "serial_number" = $systemInfo.serial_number
+        "event_stage" = $eventStage
+        "event_status" = $eventStatus
+        "manufacture" = $systemInfo.manafacture
+        "model" = $systemInfo.model
+        "baseboard" = $systemInfo.baseboard
+        "memory" = $systemInfo.ram
+        "processor" = $systemInfo.processor
+    }
+    $bodyJson = $body | ConvertTo-Json
+
+    # Define a policy that bypasses all SSL certificate checks
+    Add-Type -TypeDefinition @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+        public class TrustAllCertsPolicy : ICertificatePolicy {
+            public bool CheckValidationResult(
+                ServicePoint srvPoint, X509Certificate certificate,
+                WebRequest request, int certificateProblem) {
+                return true;
+            }
+        }
+"@
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+
+    # Send the request
+    $response = Invoke-RestMethod -Method Post -Uri $url -Body $bodyJson -ContentType "application/json"
+
+    # Reset the certificate policy
+    [System.Net.ServicePointManager]::CertificatePolicy = $null
+
+    return $response
+}
 
 #Installation Finished
 Send-EventUpdate -eventStage "Starting Automated OS Installation Process" -eventStatus "COMPLETED"
