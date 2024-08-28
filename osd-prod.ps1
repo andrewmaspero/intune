@@ -174,6 +174,27 @@ Write-Host -ForegroundColor Green "Starting Automated OS Installation Process"
 #=======================================================================
 #   [OS] Params and Start-OSDCloud
 #=======================================================================
+#Set OSDCloud Vars
+$Global:MyOSDCloud = [ordered]@{
+    updateDiskDrivers              = [bool]$False
+    updateFirmware                 = [bool]$False
+    updateNetworkDrivers           = [bool]$False
+    updateSCSIDrivers              = [bool]$False
+    captureScreenshots             = [bool]$False
+    SyncMSUpCatDriverUSB           = [bool]$False
+    HPIAALL                        = [bool]$False
+    HPIADrivers                    = [bool]$False
+    HPIAFirmware                   = [bool]$False
+    HPIASoftware                   = [bool]$False
+    HPTPMUpdate                    = [bool]$False
+    HPBIOSUpdate                   = [bool]$False
+    MSCatalogFirmware              = [bool]$False
+    MSCatalogDiskDrivers           = [bool]$False
+    MSCatalogNetDrivers            = [bool]$False
+    MSCatalogScsiDrivers           = [bool]$False
+    ScreenshotCapture              = [bool]$False
+    ScreenshotPath                 = [string]"X:\Temp\Screenshots"
+}
 
 $URL = "https://autopro.afca.org.au/hosted-files/Windows11_23H2_LATEST_ALLDRIVERS.wim"
 
